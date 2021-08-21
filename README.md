@@ -1,2 +1,2 @@
 # Turing
-Turing mechine program
+Turing mechine program with simple neat graphics

@@ -39,10 +39,10 @@
                     d="M10.573 3.021h7.427v-3.021l6 5.39-6 5.61v-3h-7.427c-3.071 0-5.561 2.356-5.561 5.427 0 3.071 2.489 5.573 5.561 5.573h7.427v5h-7.427c-5.84 0-10.573-4.734-10.573-10.573s4.733-10.406 10.573-10.406z" />
                 <title>Redo</title>
             </svg>
-            <div class="procedure">
+            <form onsubmit="MediaDOM.createProduce(event);" autocomplete="off" class="procedure">
                 <input id="procedure_name" type="text" placeholder="Procedure" maxlength="10">
-                <input id="procedure_save" type="button" value="Save">
-            </div>
+                <input id="procedure_save" type="submit" value="Save">
+            </form>
         </div>
         <div id="state">
             <!--
@@ -62,8 +62,6 @@
             </div>
         </div>
         <div id="entities">
-            <button id="queue" onclick="window.location.hash = this.id;">queue</button>
-            <button id="debug" onclick="window.location.hash = this.id;">debug</button>
         </div>
         <svg id="settings_button" viewBox="0 0 20 20">
             <path

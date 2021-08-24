@@ -40,7 +40,10 @@ class Engine {
 
         // If current is a procedure && if that procedure is still running
         const isRunningProcedure = this.current instanceof Procedure ? !this.current.finished : false;
-
+        // If procedure is finished then reset it for the next call
+        if (this.current.finished) {
+            this.current.reset();
+        }
         // Nexts is queue connections build filtered or procedure operations
         const nexts = isRunningProcedure ?
             this.current.operation : // Operations
@@ -62,10 +65,12 @@ class Engine {
         // Converts direction to a number
         const direction = next.state.absoluteDirection;
         MemoryDOM.setNext({ output, direction });
-        if (isRunningProcedure)
+        if (isRunningProcedure) {
             this.current.operation = next.queue;
-        else
+        }
+        else {
             this.current = next;
+        }
         this.#handlePrint(output);
     }
 
@@ -93,6 +98,9 @@ class Engine {
         if (deltatime >= properties.speed) {
             this.#runner += deltatime;
             this.#tick();
+        }
+        if (this.current instanceof Procedure && this.running) {
+            this.current.progress = this.current.finished ? 0 : this.current.progress + (100 / properties.speed); 
         }
     }
 }
@@ -200,10 +208,10 @@ const buildMemory = expression => {
     } catch (e) {
         throw new Error("Invalid expression\n");
     }
-
 }
 
 
+/*
 class IO {
 
     static save() {
@@ -222,3 +230,5 @@ class IO {
         return { queues };
     }
 }
+
+*/

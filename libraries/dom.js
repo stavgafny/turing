@@ -117,6 +117,7 @@ class MediaDOM {
     static #undoRedoAvailable = "available";
     static #undoRedoActivation = "activated";
     static #undoRedoActivationDelay = 1;
+    static #tester = /^[A-Za-z0-9]*$/;
 
     static playPause = document.getElementById("play_pause");
     static reset = document.getElementById("reset");
@@ -156,6 +157,24 @@ class MediaDOM {
         if (this.#handleUndoRedo(this.redo, Memo.redo()))
             Engine.stop();
     }
+
+    static createProduce(event) {
+        // Creates a new produce from all the current queues
+        event.preventDefault();
+        const produceName = this.procedureName.value;
+        if (produceName.length === 0 || !this.#tester.test(produceName) || entities.procedures[produceName]) {
+            // there is all ready a procedure entity with that name
+            return false;
+        }
+        const procedure = {};
+        queues.map(queue => {
+            const id = (queue instanceof Procedure) ? queue.procedureId : queue.id;
+            procedure[id] = queue.connections.map(connection => ({ state: connection.state, queue: id }));
+        });
+        console.log(procedure);
+        entities.procedures[produceName] = procedure;
+        EntitiesDOM.createEntity(produceName);
+    }
 }
 
 
@@ -182,6 +201,20 @@ class SettingsDOM {
     static handleSpeedChange() {
         properties.speed = this.speedRange.value;
         this.speedTracker.innerText = properties.speed + "ms";
+    }
+
+}
+
+class EntitiesDOM {
+
+    static #dom = document.getElementById("entities");
+
+    static createEntity(name) {
+        const entity = document.createElement("button");
+        entity.id = name;
+        entity.innerText = name;
+        entity.onclick = function () { entities.current = this.id; };
+        this.#dom.appendChild(entity);
     }
 
 }

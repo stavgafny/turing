@@ -164,6 +164,10 @@ class Queue {
 
 class Procedure extends Queue {
 
+    static identifier = "@";
+
+    static ID = 0;
+
     static draw({ x, y }) {
         let intersects = false;
         const qs = graphics.sizes.queue;
@@ -181,9 +185,11 @@ class Procedure extends Queue {
 
     constructor({ x, y }, id) {
         super({ x, y }, id);
-        this.current = 0;
         this.operations = entities.procedures[id];
+        this.current = 0;
         this.progress = 0;
+        // Unique procedure id to identify on nested procedures
+        this.procedureId = this.id + Procedure.identifier + (Procedure.ID++).toString();
     }
 
     get finished() {
@@ -193,9 +199,15 @@ class Procedure extends Queue {
         return inputs.indexOf(input) === -1 && inputs.indexOf(State.SPECIAL_KEYS.all) === -1;
     }
 
-    get operation() { return this.operations[this.current]; }
+    get operation() { return this.operations[this.current] ? this.operations[this.current] : []; }
 
-    set operation(value) { this.current = value; }
+    set operation(value) {
+        this.current = value;
+        console.log('!');
+        if (typeof(value) === "string") {
+            console.log('a');
+        }
+    }
 
     reset() {
         this.operation = 0;
@@ -203,8 +215,7 @@ class Procedure extends Queue {
 
     draw(connectable) {
         super.draw(connectable, false);
-        this.progress += (this === Engine.current && Engine.running) ? 1 : 0;
-        // Returns if engine current is this queue or a connection of it
+        // Returns if engine current is this procedure or a connection of it
         return this === Engine.current || this.connections.indexOf(Engine.current) !== -1;
     }
 }

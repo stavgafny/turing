@@ -24,7 +24,7 @@ const entities = {
 
 const properties = {
     speed: 50,
-    memory: `200@|3:1|0:2|1:1|?1$1`
+    memory: `200@|3:1|0:10|1:1|?1$1`
 };
 
 function setup() {
@@ -37,19 +37,10 @@ function setup() {
     angleMode(DEGREES);
     Engine.reset();
     SettingsDOM.handleSpeedChange();
-    //entities.current = entities.default;
-
-    // return ;// Debug
-    Memo.create(queues, new Queue({ x: 200, y: 400 }, queues.length));
-    Memo.create(queues, new Procedure({ x: 600, y: 400 }, "debug"));
-    queues[0].build({ x: 280, y: 400 });
-    queues[0].next({ x: 520, y: 400 });
-    queues[0].connections[0].queue = queues[1];
-    const c = queues[0].connections.pop();
-    Memo.create(queues[0].connections, c);
-
-    //console.log(IO.save());
-
+    EntitiesDOM.createEntity(entities.default);
+    entities.current = "";
+    entities.current = entities.default;
+    debug();
 }
 
 function draw() {
@@ -69,4 +60,15 @@ function draw() {
         Engine.current = queues[0];
     if (Engine.running)
         Engine.update();
+}
+
+function debug() {
+    Memo.create(queues, new Queue({ x: 200, y: 400 }, queues.length));
+    Memo.create(queues, new Procedure({ x: 600, y: 400 }, "debug"));
+    queues[0].build({ x: 280, y: 400 });
+    queues[0].next({ x: 520, y: 400 });
+    queues[0].connections[0].queue = queues[1];
+    const c = queues[0].connections.pop();
+    Memo.create(queues[0].connections, c);
+
 }

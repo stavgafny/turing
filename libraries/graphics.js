@@ -160,8 +160,7 @@ const graphics = (function () {
                 stroke(0);
                 noFill();
                 ellipse(0, 0, value);
-                rotate(180);
-                rect(0, 0, value, value);
+                rect(0, 0, value, value, 10);
                 pop();
             },
 
@@ -210,10 +209,11 @@ const graphics = (function () {
                 strokeWeight(sizes.current / 3);
                 noFill();
                 ellipse(0, 0, value);
-                rotate(180 + procedure.progress);
-                rect(0, 0, value, value);
+                push();
+                rotate(procedure.progress);
+                rect(0, 0, value, value, 10);
+                pop();
                 noStroke();
-                rotate(-180 - procedure.progress);
                 fill(0);
                 textSize(sizes.queue * 2 / procedure.id.length);
                 text(procedure.id, 0, 0);

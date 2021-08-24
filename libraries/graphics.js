@@ -215,7 +215,7 @@ const graphics = (function () {
                 pop();
                 noStroke();
                 fill(0);
-                textSize(sizes.queue * 2 / procedure.id.length);
+                textSize(sizes.queue / Math.sqrt(procedure.id.length * 2));
                 text(procedure.id, 0, 0);
                 pop();
                 // All procedure connections

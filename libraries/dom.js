@@ -171,7 +171,6 @@ class MediaDOM {
             const id = (queue instanceof Procedure) ? queue.procedureId : queue.id;
             procedure[id] = queue.connections.map(connection => ({ state: connection.state, queue: id }));
         });
-        console.log(procedure);
         entities.procedures[produceName] = procedure;
         EntitiesDOM.createEntity(produceName);
     }
@@ -190,12 +189,22 @@ class SettingsDOM {
 
     static get displayed() { return this.settingsWindow.classList.contains(this.#display); }
 
+    static #windowDisplayMode(mode) {
+        const children = this.settingsWindow.children;
+        for (let i = 0; i < children.length; i++) {
+            const element = children[i];
+            element.disabled = !mode;
+        }
+        mode = mode ? "add" : "remove";
+        this.settingsWindow.classList[mode](this.#display);
+    }
+
     static escape() {
-        this.settingsWindow.classList.remove(this.#display);
+        this.#windowDisplayMode(false);
     }
 
     static displaySettings() {
-        this.settingsWindow.classList.toggle(this.#display);
+        this.#windowDisplayMode(true);
     }
 
     static handleSpeedChange() {

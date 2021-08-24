@@ -13,6 +13,8 @@ const graphics = (function () {
         intersects: "#faa",
         notIntersects: "#ada",
         delete: "#f76",
+        procedureAlive : "#9da",
+        procedureFinished : "#a0000099",
         get current() { return Engine.running ? "#44e" : "#124"; }
     };
 
@@ -207,12 +209,13 @@ const graphics = (function () {
                 }
                 ellipse(0, 0, sizes.queue * 2);
                 strokeWeight(sizes.current / 3);
-                noFill();
-                ellipse(0, 0, value);
                 push();
                 rotate(procedure.progress);
+                fill(procedure.finished ? colors.procedureFinished : colors.procedureAlive);
+                stroke(0);
                 rect(0, 0, value, value, 10);
                 pop();
+                ellipse(0, 0, value);
                 noStroke();
                 fill(0);
                 textSize(sizes.queue / Math.sqrt(procedure.id.length * 2));

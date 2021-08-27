@@ -152,7 +152,7 @@ class Memo {
             // Check if other queues were connected to deleted queue
             queues.map(queue => {
                 const filteredConnections = queue.connections.filter(connection => {
-                    if (connection.queue === obj) {
+                    if (connection.next === obj) {
                         save.push(this.#FORMAT(queue.connections, connection, this.#DELETE));
                     } else {
                         return connection;
@@ -211,8 +211,8 @@ function mousePressed(e) {
 
     if (Mouse.fitQueue) {
         // Creates a new queue/procedure
-        const arg = (entities.name === entities.default) ? getNewQueueId() : entities.name;
-        return Memo.create(queues, new entities.current(Mouse.position, arg));
+        const id = (entities.name === entities.default) ? getNewQueueId() : entities.name;
+        return Memo.create(queues, new entities.current(Mouse.position, id));
     }
 
     if (buildConnection) {
@@ -232,7 +232,7 @@ function mousePressed(e) {
             };
             buildConnection.queue.next(connectionShorted);
             buildConnection.queue.next(connection);
-            buildConnection.connection.queue = queue;
+            buildConnection.connection.next = queue;
             // Re-adding object again using Memo to save changes(undo/redo)
             buildConnection.queue.connections.pop();
             Memo.create(buildConnection.queue.connections, buildConnection.connection)

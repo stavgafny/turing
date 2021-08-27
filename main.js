@@ -6,25 +6,22 @@ const entities = {
     get name() { return window.location.hash.slice(1); },
     get current() { return (this.name === this.default) ? Queue : Procedure; },
     set current(value) { window.location.hash = value; },
-    procedures: {
-        "debug": {
-            0: [
-                { state: new State(State.DEFAULT), queue: 0 },
-                { state: new State({ input: "1", output: "A", direction: "R" }), queue: 1 }
-            ],
-            1: [
-                { state: new State({ input: State.SPECIAL_KEYS.all, output: "C", direction: "R" }), queue: 2 }
-            ],
-            2: [
-                { state: new State({ input: State.SPECIAL_KEYS.edge, output: "a", direction: "R" }), queue: 0 }
-            ]
-        }
+    procedures: {},
+    createProcedure(name) {
+        const procedureInstructions = [];
+        queues.map(queue => {
+            procedureInstructions.push({
+                id : queue.id,
+                connections : queue.connections.map(connection => ({ state: connection.state, next: connection.next.id }))
+            });
+        });
+        this.procedures[name] = procedureInstructions;
     }
 };
 
 const properties = {
-    speed: 50,
-    memory: `200@|3:1|0:10|1:1|?1$1`
+    speed: 200,
+    memory: `200@|${State.SPECIAL_KEYS.edge}:1|0:10|R:1|1:1|?1$1`
 };
 
 function setup() {
@@ -36,6 +33,7 @@ function setup() {
     rectMode(CENTER);
     angleMode(DEGREES);
     Engine.reset();
+    SettingsDOM.speedRange.value = properties.speed;
     SettingsDOM.handleSpeedChange();
     EntitiesDOM.createEntity(entities.default);
     entities.current = "";
@@ -63,12 +61,43 @@ function draw() {
 }
 
 function debug() {
+
+    return;  
     Memo.create(queues, new Queue({ x: 200, y: 400 }, queues.length));
-    Memo.create(queues, new Procedure({ x: 600, y: 400 }, "debug"));
+    Memo.create(queues, new Queue({ x: 600, y: 400 }, queues.length));
+    Memo.create(queues, new Queue({ x: 900, y: 400 }, queues.length));
     queues[0].build({ x: 280, y: 400 });
     queues[0].next({ x: 520, y: 400 });
-    queues[0].connections[0].queue = queues[1];
-    const c = queues[0].connections.pop();
+    queues[0].connections[0].next = queues[1];
+    let c = queues[0].connections.pop();
+    c.state.output = "M";
     Memo.create(queues[0].connections, c);
-
+    queues[1].build({ x: 680, y: 400 });
+    queues[1].next({ x: 820, y: 400 });
+    queues[1].connections[0].next = queues[2];
+    c = queues[1].connections.pop();
+    c.state.output = "D";
+    Memo.create(queues[1].connections, c);
+    MediaDOM.procedureName.value = "Debug";
+    MediaDOM.createProcedure(event);
+    queues.length = 0;
+    Memo.create(queues, new Queue({ x: 200, y: 100 }, queues.length));
+    Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Debug"));
+    Memo.create(queues, new Procedure({ x: 700, y: 400 }, "Debug"));
+    c = new Connection({x : 280, y : 100});
+    c.path.push({x : 200, y : 320});
+    c.next = queues[1];
+    c.state.output = "F";
+    c.position = c.path[0];
+    Memo.create(queues[0].connections, c);
+    c = new Connection({x : 280, y : 400});
+    c.path.push({x : 620, y : 400});
+    c.next = queues[2];
+    c.state.output = "A";
+    c.position = c.path[0];
+    Memo.create(queues[1].connections, c);
+    MediaDOM.procedureName.value = "Xdebug";
+    MediaDOM.createProcedure(event);
+    queues.length = 0;
+    Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Xdebug"));
 }

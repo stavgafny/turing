@@ -126,10 +126,10 @@ class MediaDOM {
     static procedureName = document.getElementById("procedure_name");
     static procedureSave = document.getElementById("procedure_save");
 
-    static #handleUndoRedo = (dom, operation) => {
-        // Gets DOM element and undo/redo operation
-        // Effacts DOM element if there was an undo/redo operation then
-        if (!operation)
+    static #handleUndoRedo = (dom, method) => {
+        // Gets DOM element and undo/redo method
+        // Effacts DOM element if there was an undo/redo method then
+        if (!method)
             return false;
         dom.classList.add(this.#undoRedoActivation);
         setTimeout(() => dom.classList.remove(this.#undoRedoActivation), this.#undoRedoActivationDelay);
@@ -158,20 +158,15 @@ class MediaDOM {
             Engine.stop();
     }
 
-    static createProduce(event) {
+    static createProcedure(event) {
         // Creates a new produce from all the current queues
         event.preventDefault();
         const produceName = this.procedureName.value;
-        if (produceName.length === 0 || !this.#tester.test(produceName) || entities.procedures[produceName]) {
-            // there is all ready a procedure entity with that name
+        if (!(produceName.length > 0) || !isNaN(int(produceName)) || !this.#tester.test(produceName) || entities.procedures[produceName] || !(queues.length > 0)) {
+            // there is all ready a procedure entity with that name / procedure has no content / procedure name isn't valid
             return false;
         }
-        const procedure = {};
-        queues.map(queue => {
-            const id = (queue instanceof Procedure) ? queue.procedureId : queue.id;
-            procedure[id] = queue.connections.map(connection => ({ state: connection.state, queue: id }));
-        });
-        entities.procedures[produceName] = procedure;
+        entities.createProcedure(produceName);
         EntitiesDOM.createEntity(produceName);
     }
 }
@@ -236,7 +231,7 @@ StateDOM.input.onclick = function () { this.classList.add(StateDOM.setter); Stat
 StateDOM.output.onclick = function () { this.classList.add(StateDOM.setter); StateDOM.input.classList.remove(StateDOM.setter); }
 StateDOM.direction.onclick = function () { this.children[0].innerText = (this.children[0].innerText === 'R') ? 'L' : 'R'; }
 MediaDOM.playPause.onclick = function () { Engine.running ? Engine.stop() : Engine.run(); this.blur(); }
-MediaDOM.reset.onclick = function () { Engine.reset(); this.blur(); }
+MediaDOM.reset.onclick = function () { Engine.reset(); this.blur(); queues.map(q => q instanceof Procedure ? q.reset() : null)}
 MediaDOM.undo.onclick = function () { MediaDOM.callUndo(); }
 MediaDOM.redo.onclick = function () { MediaDOM.callRedo(); }
 SettingsDOM.displayButton.onclick = function () { SettingsDOM.displaySettings(); }

@@ -53,6 +53,10 @@ class Engine {
 
     static #nextInstruction() {
         // Next path from instruction
+        
+        // Handles procedure connection step
+        this.current.connectionStep = !this.current.connectionStep;
+        if (this.current.connectionStep) return;
 
         // Check if current instruction has instructions then it's a procedure(nested procedure)
         const instructions = Procedure.get(this.current.instruction.id);
@@ -66,7 +70,6 @@ class Engine {
         }
 
         let match = this.#getMatchingInput(this.current.instruction.connections);
-        console.log(match);
         while (!match && this.#stack.length > 0) {
             const {id, instructionID} = this.#stack.pop();
             const instructions = Procedure.get(id);
@@ -143,9 +146,12 @@ class Engine {
         }
         if (this.current instanceof Procedure && this.running) {
             let inc = 0;
-            if ((deltatime > properties.speed / 2))
-                inc = (deltatime / properties.speed) * 180;
+            if (deltatime > properties.speed / 2)
+                inc = (deltatime / properties.speed * 2) * 90;
             this.current.progress = this.current.finished ? 0 : inc;
+            if (deltatime >= properties.speed || !this.current.connectionStep) {
+                this.current.progress = 0;
+            }
         }
     }
 }

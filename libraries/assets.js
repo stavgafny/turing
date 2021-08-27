@@ -197,6 +197,7 @@ class Procedure extends Queue {
         this.instructionID = null;
         this.finished = null;
         this.progress = null;
+        this.connectionStep = null;
         this.set(entities.procedures[id]);
     }
 
@@ -213,6 +214,7 @@ class Procedure extends Queue {
         this.instruction = this.instructions[0].id;
         this.finished = false;
         this.progress = 0;
+        this.connectionStep = false;
     }
 
     end() {

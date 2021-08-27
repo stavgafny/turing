@@ -1,9 +1,11 @@
 // Main script, everything is running from here
+
 const CANVAS_HEIGHT_WRAPPER = .88;
 const queues = [];
 const entities = {
+    get identifier() { return "."; },
     get default() { return "queue"; },
-    get name() { return window.location.hash.slice(1); },
+    get name() { return window.location.hash.slice(2); /* removes has and identifier at the begining([#.]) */ },
     get current() { return (this.name === this.default) ? Queue : Procedure; },
     set current(value) { window.location.hash = value; },
     procedures: {},
@@ -35,9 +37,9 @@ function setup() {
     Engine.reset();
     SettingsDOM.speedRange.value = properties.speed;
     SettingsDOM.handleSpeedChange();
-    EntitiesDOM.createEntity(entities.default);
+    const defaultEntity = EntitiesDOM.createEntity(entities.default);
     entities.current = "";
-    entities.current = entities.default;
+    entities.current = defaultEntity;
     debug();
 }
 

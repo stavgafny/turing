@@ -215,10 +215,11 @@ class EntitiesDOM {
 
     static createEntity(name) {
         const entity = document.createElement("button");
-        entity.id = name;
+        entity.id = entities.identifier + name;
         entity.innerText = name;
         entity.onclick = function () { entities.current = this.id; };
         this.#dom.appendChild(entity);
+        return entity.id;
     }
 
 }

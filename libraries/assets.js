@@ -55,28 +55,28 @@ class State {
 class Connection {
 
     static parse(string) {
-        let { path, state, queue } = JSON.parse(string);
+        let { path, state, next } = JSON.parse(string);
         path = JSON.parse(path);
         state = State.parse(state);
-        queue = getQueueById(queue);
-        return { path, state, queue };
+        next = getNextById(next);
+        return { path, state, next };
     }
 
     constructor({ x, y }) {
         this.position = { x, y };
         this.state = new State(StateDOM.getState());
         this.path = [{ x, y }];
-        this.queue = null;
+        this.next = null;
     }
 
     get stringify() {
         const path = JSON.stringify(this.path);
         const state = this.state.stringify;
-        const queue = this.queue ? this.queue.id : -1;
-        return JSON.stringify({ path, state, queue });
+        const next = this.next ? this.next.id : -1;
+        return JSON.stringify({ path, state, next });
     }
 
-    get connected() { return this.queue !== null; }
+    get connected() { return this.next !== null; }
 
     get last() { return this.path[this.path.length - 1]; }
 }
@@ -104,7 +104,6 @@ class Queue {
         graphics.render.staticQueue({ x, y }, intersects);
         return intersects;
     }
-
 
     constructor({ x, y }, id) {
         this.position = { x, y };
@@ -165,8 +164,16 @@ class Queue {
 class Procedure extends Queue {
 
     static identifier = "@";
-
     static ID = 0;
+
+    static get(name) {
+        // Gets a current procedure id, returns the instance of that procedure if exists
+        if (!name || !isNaN(int(name)))
+            return null;
+        if (name.indexOf(Procedure.identifier) === -1)
+            return null;
+        return entities.procedures[name.split(Procedure.identifier)[0]];
+    }
 
     static draw({ x, y }) {
         let intersects = false;
@@ -184,33 +191,38 @@ class Procedure extends Queue {
     }
 
     constructor({ x, y }, id) {
-        super({ x, y }, id);
-        this.operations = entities.procedures[id];
-        this.current = 0;
-        this.progress = 0;
-        // Unique procedure id to identify on nested procedures
-        this.procedureId = this.id + Procedure.identifier + (Procedure.ID++).toString();
+        super({ x, y }, id + Procedure.identifier + Procedure.ID++);
+        [this.name, this.number] = this.id.split(Procedure.identifier);
+        this.instructions = null;
+        this.instructionID = null;
+        this.finished = null;
+        this.progress = null;
+        this.set(entities.procedures[id]);
     }
 
-    get finished() {
-        const inputs = this.operation.map(_operation => _operation.state.input);
-        const input = MemoryDOM.cellInput;
-        // Returns false if there are no next paths available [ length = 0 or no input match]
-        return inputs.indexOf(input) === -1 && inputs.indexOf(State.SPECIAL_KEYS.all) === -1;
+    get instruction() {
+        const ids = this.instructions.map(o => o.id);
+        return this.instructions[ids.indexOf(this.instructionID)];
     }
 
-    get operation() { return this.operations[this.current] ? this.operations[this.current] : []; }
-
-    set operation(value) {
-        this.current = value;
-        console.log('!');
-        if (typeof(value) === "string") {
-            console.log('a');
-        }
+    set instruction(value) {
+        this.instructionID = value;
     }
 
     reset() {
-        this.operation = 0;
+        this.instruction = this.instructions[0].id;
+        this.finished = false;
+        this.progress = 0;
+    }
+
+    end() {
+        this.reset();
+        this.finished = true;
+    }
+
+    set(instructions) {
+        this.instructions = instructions;
+        this.reset();
     }
 
     draw(connectable) {
@@ -238,7 +250,7 @@ const getNewQueueId = () => {
 }
 
 
-const getQueueById = id => {
+const getNextById = id => {
     for (let i = 0; i < queues.length; i++) {
         if (queues[i].id === id) {
             return queues[i];

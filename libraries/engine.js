@@ -3,6 +3,7 @@
 class Engine {
     // Handles the mechine and connects with DOM elements
 
+    static #stack = [];
     static #runner = null;
     static current = null;
 
@@ -10,68 +11,109 @@ class Engine {
 
     static get running() { return this.#runner !== null; }
 
-    static #handlePrint(output) {
-        if (output === State.SPECIAL_KEYS.print) {
-            if (this.print !== null) {
-                console.log(this.print);
-                this.print = null;
-            } else {
-                this.print = "";
-            }
-        } else if (this.print !== null) {
-            this.print += output;
+    static #getMatchingInput(connections) {
+        // Gets list of connections
+        // Returns the one that matches the current cell input and returns it if one exsists
+
+        // All connections inputs
+        const inputs = connections.map(c => c.state.input);
+        const input = MemoryDOM.cellInput;
+        // Tries first to get a specific connection input
+        // If not found, falls back to "all" connection
+        let index = inputs.indexOf(input);
+        if (index === -1)
+            index = inputs.indexOf(State.SPECIAL_KEYS.all)
+        return connections[index];
+    }
+
+    static #applyStateOutput(state) {
+        // Apllies the state output to the memory
+        // No output change if connection output is "all" special key
+        const output = state.output === State.SPECIAL_KEYS.all ?
+            MemoryDOM.cellInput : state.output;
+        const direction = state.absoluteDirection;
+        MemoryDOM.setNext({ output, direction });
+    }
+
+    static #nextConnection() {
+        // Next path from connections
+
+        // Gets all filtered connections from in build ones(not connected)
+        const connections = this.current.connections.filter(c => c.connected);
+        const match = this.#getMatchingInput(connections);
+        // If there is no next path(there is no connection found)
+        if (!match)
+            return Engine.stop();
+
+        // Found a matching connection that input matches current cell input
+        // No output change if connection output is "all" special key
+        this.#applyStateOutput(match.state);
+        this.current = match;
+    }
+
+    static #nextInstruction() {
+        // Next path from instruction
+
+        // Check if current instruction has instructions then it's a procedure(nested procedure)
+        const instructions = Procedure.get(this.current.instruction.id);
+        if (instructions) {
+            this.#stack.push({id : this.current.id, instructionID : this.current.instruction.id});
+            this.current.id = this.current.instruction.id;
+            this.current.set(instructions);
+            this.current.reset();
+            // Next instruction on the nested procedure
+            return this.#nextInstruction();
+        }
+
+        let match = this.#getMatchingInput(this.current.instruction.connections);
+        console.log(match);
+        while (!match && this.#stack.length > 0) {
+            const {id, instructionID} = this.#stack.pop();
+            const instructions = Procedure.get(id);
+            this.current.id = id;
+            this.current.set(instructions);
+            this.current.instruction = instructionID;
+            match = this.#getMatchingInput(this.current.instruction.connections);
+        }
+        if (match) {
+            this.#applyStateOutput(match.state);
+            this.current.instruction = match.next;
+        } else {
+            this.current.end();
         }
     }
 
     static #tick() {
-        // Next Mechine step If there is a path
+        // Next mechine step
         if (!this.current) return;
-        // Checks if current is a connection
+
+        // If currently on connection tick to the connected side
         if (this.current instanceof Connection) {
-            this.current = this.current.queue;
+            this.current = this.current.next;
             if (this.current instanceof Procedure) {
                 this.current.reset();
             }
             return;
         }
 
-        // Checks if current is a valid queue
+        // Checks if current is a valid queue / Procedure[sub class of queue]
         if (!(this.current instanceof Queue)) return;
 
-        // If current is a procedure && if that procedure is still running
-        const isRunningProcedure = this.current instanceof Procedure ? !this.current.finished : false;
-        // If procedure is finished then reset it for the next call
-        if (this.current.finished) {
-            this.current.reset();
+        // If current is a procedure
+        if (this.current instanceof Procedure) {
+            // If procedure is finished, get the next path from the procedure connections(not from procedure instruction)
+            if (this.current.finished) {
+                return this.#nextConnection();
+            }
+            this.#nextInstruction();
+        } else {
+            // Then it's a queue
+            this.#nextConnection();
         }
-        // Nexts is queue connections build filtered or procedure operations
-        const nexts = isRunningProcedure ?
-            this.current.operation : // Operations
-            this.current.connections.filter(connection => connection.connected) // Connections
-        // All nexts input
-        const inputs = nexts.map(next => next.state.input);
 
-        const input = MemoryDOM.cellInput;
-        // Tries first to get a specific next input
-        // If not found, falls back to "all" next
-        let index = inputs.indexOf(input);
-        if (index === -1)
-            index = inputs.indexOf(State.SPECIAL_KEYS.all)
-        const next = nexts[index];
-        // If there is no next path (index is still -1)
-        if (!next) return Engine.stop();
-        const output = (next.state.output === State.SPECIAL_KEYS.all) ?
-            input : next.state.output;
-        // Converts direction to a number
-        const direction = next.state.absoluteDirection;
-        MemoryDOM.setNext({ output, direction });
-        if (isRunningProcedure) {
-            this.current.operation = next.queue;
-        }
-        else {
-            this.current = next;
-        }
-        this.#handlePrint(output);
+
+
+
     }
 
     static run() {
@@ -100,7 +142,10 @@ class Engine {
             this.#tick();
         }
         if (this.current instanceof Procedure && this.running) {
-            this.current.progress = this.current.finished ? 0 : this.current.progress + (100 / properties.speed); 
+            let inc = 0;
+            if ((deltatime > properties.speed / 2))
+                inc = (deltatime / properties.speed) * 180;
+            this.current.progress = this.current.finished ? 0 : inc;
         }
     }
 }

@@ -14,7 +14,7 @@ const graphics = (function () {
         notIntersects: "#ada",
         delete: "#f76",
         procedureAlive : "#9da",
-        procedureFinished : "#a0000099",
+        procedureFinished : "#50000099",
         get current() { return Engine.running ? "#44e" : "#124"; }
     };
 
@@ -209,17 +209,17 @@ const graphics = (function () {
                 }
                 ellipse(0, 0, sizes.queue * 2);
                 strokeWeight(sizes.current / 3);
+                stroke(0);
                 push();
                 rotate(procedure.progress);
                 fill(procedure.finished ? colors.procedureFinished : colors.procedureAlive);
-                stroke(0);
                 rect(0, 0, value, value, 10);
                 pop();
                 ellipse(0, 0, value);
                 noStroke();
                 fill(0);
-                textSize(sizes.queue / Math.sqrt(procedure.id.length * 2));
-                text(procedure.id, 0, 0);
+                textSize(sizes.queue / Math.sqrt(procedure.name.length * 2));
+                text(procedure.name, 0, 0);
                 pop();
                 // All procedure connections
                 drawConnections(procedure);

@@ -120,10 +120,11 @@ class Engine {
     }
 
     static setCurrent(current) {
-        // Sets new engine current
-
-        // If changed current is a procedure reset it
-        // If stack isn't empty, reset it and set changed current to it's origin
+        /*
+        Sets new engine current
+        If changed current is a procedure reset it
+        If stack isn't empty, reset it and set changed current to it's origin
+        */
         if (this.current instanceof Procedure) {
             this.current.reset();
             if (this.#stack.length > 0) {

@@ -4,7 +4,7 @@ import time
 filename = "packed_code.txt"
 
 # Ignore:
-exceptions = [filename, "line_counter.py", "p5.min.js", ".gitignore", "README.md", ".git"]
+exceptions = [filename, "line_counter.py", "p5.min.js", "node_modules", ".gitignore", "README.md", ".git", "package.json", "package-lock.json"]
 
 
 data = ""

@@ -223,13 +223,20 @@ const graphics = (function () {
                 pop();
                 ellipse(0, 0, value);
                 noStroke();
+                textFont("arial");
                 fill(0);
                 textSize(sizes.queue / Math.sqrt(procedure.name.length * 2));
                 text(procedure.name, 0, 0);
                 textSize(30);
                 let m = "";
                 for (let i = 0; i < nested.length; i++) m += ".";
-                text(m, 0, 15);
+                text(m, 0, -30);
+                textSize(16);
+                const instructionID = procedure.instruction.id;
+                const id = isNaN(int(instructionID)) ?
+                instructionID.split(Procedure.identifier)[0] :
+                "q" + instructionID;
+                text(id, 0, 18);
                 pop();
                 // All procedure connections
                 drawConnections(procedure);

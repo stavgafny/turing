@@ -173,7 +173,7 @@ class MediaDOM {
     static deleteProcedure() {
         // Deletes the procedure that is the current entity(if not default[queue])
         if (entities.name !== entities.default) {
-            entities.procedures[entities.name] = null;
+            delete entities.procedures[entities.name];
             EntitiesDOM.deleteEntity(entities.name);
         }
     }
@@ -195,8 +195,11 @@ class EntitiesDOM {
 
     static deleteEntity(name) {
         const entity = document.getElementById(entities.identifier + name);
-        console.log(entity);
-        this.#dom.removeChild(entity);
+        if (entity) {
+            this.#dom.removeChild(entity);
+        }
+        // Set entity to default [queue]
+        entities.current = entities.identifier + entities.default;
     }
 }
 

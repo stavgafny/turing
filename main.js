@@ -12,8 +12,9 @@ const entities = {
     createProcedure(name) {
         const procedureInstructions = [];
         queues.map(queue => {
+            const id = queue instanceof Procedure ? queue.originID : queue.id;
             procedureInstructions.push({
-                id : queue.id,
+                id,
                 connections : queue.connections.map(connection => ({ state: connection.state, next: connection.next.id }))
             });
         });
@@ -40,7 +41,7 @@ function setup() {
     const defaultEntity = EntitiesDOM.createEntity(entities.default);
     entities.current = "";
     entities.current = defaultEntity;
-    debug();
+    debug().loop();
 }
 
 function draw() {
@@ -57,49 +58,78 @@ function draw() {
     }
     // If there is currently no engine current -> set a new one
     if (!hasCurrent)
-        Engine.current = queues[0];
+        Engine.setCurrent(queues[0]);
     if (Engine.running)
         Engine.update();
 }
 
 function debug() {
 
-    return;  
-    Memo.create(queues, new Queue({ x: 200, y: 400 }, queues.length));
-    Memo.create(queues, new Queue({ x: 600, y: 400 }, queues.length));
-    Memo.create(queues, new Queue({ x: 900, y: 400 }, queues.length));
-    queues[0].build({ x: 280, y: 400 });
-    queues[0].next({ x: 520, y: 400 });
-    queues[0].connections[0].next = queues[1];
-    let c = queues[0].connections.pop();
-    c.state.output = "M";
-    Memo.create(queues[0].connections, c);
-    queues[1].build({ x: 680, y: 400 });
-    queues[1].next({ x: 820, y: 400 });
-    queues[1].connections[0].next = queues[2];
-    c = queues[1].connections.pop();
-    c.state.output = "D";
-    Memo.create(queues[1].connections, c);
-    MediaDOM.procedureName.value = "Debug";
-    MediaDOM.createProcedure(event);
-    queues.length = 0;
-    Memo.create(queues, new Queue({ x: 200, y: 100 }, queues.length));
-    Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Debug"));
-    Memo.create(queues, new Procedure({ x: 700, y: 400 }, "Debug"));
-    c = new Connection({x : 280, y : 100});
-    c.path.push({x : 200, y : 320});
-    c.next = queues[1];
-    c.state.output = "F";
-    c.position = c.path[0];
-    Memo.create(queues[0].connections, c);
-    c = new Connection({x : 280, y : 400});
-    c.path.push({x : 620, y : 400});
-    c.next = queues[2];
-    c.state.output = "A";
-    c.position = c.path[0];
-    Memo.create(queues[1].connections, c);
-    MediaDOM.procedureName.value = "Xdebug";
-    MediaDOM.createProcedure(event);
-    queues.length = 0;
-    Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Xdebug"));
+    return {
+        loop : function() {
+            Memo.create(queues, new Queue({ x: 200, y: 400 }, queues.length));
+            queues[0].build({ x: 280, y: 400 });
+            queues[0].next({ x: 520, y: 400 });
+            queues[0].connections[0].next = queues[0];
+            let c = queues[0].connections.pop();
+            Memo.create(queues[0].connections, c);
+            MediaDOM.procedureName.value = "Debug";
+            MediaDOM.createProcedure(event);
+            queues.length = 0;
+            Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Debug"));
+            MediaDOM.procedureName.value = "Debugx";
+            MediaDOM.createProcedure(event);
+            queues.length = 0;
+            Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Debugx"));
+            MediaDOM.procedureName.value = "Debugxs";
+            MediaDOM.createProcedure(event);
+            queues.length = 0;
+            Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Debugxs"));
+            MediaDOM.procedureName.value = "Debugxss";
+            MediaDOM.createProcedure(event);
+            queues.length = 0;
+            Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Debugxss"));
+            MediaDOM.procedureName.value = "";
+        },
+        nested : function() {
+            Memo.create(queues, new Queue({ x: 200, y: 400 }, queues.length));
+            Memo.create(queues, new Queue({ x: 600, y: 400 }, queues.length));
+            Memo.create(queues, new Queue({ x: 900, y: 400 }, queues.length));
+            queues[0].build({ x: 280, y: 400 });
+            queues[0].next({ x: 520, y: 400 });
+            queues[0].connections[0].next = queues[1];
+            let c = queues[0].connections.pop();
+            c.state.output = "M";
+            Memo.create(queues[0].connections, c);
+            queues[1].build({ x: 680, y: 400 });
+            queues[1].next({ x: 820, y: 400 });
+            queues[1].connections[0].next = queues[2];
+            c = queues[1].connections.pop();
+            c.state.output = "D";
+            Memo.create(queues[1].connections, c);
+            MediaDOM.procedureName.value = "Debug";
+            MediaDOM.createProcedure(event);
+            queues.length = 0;
+            Memo.create(queues, new Queue({ x: 200, y: 100 }, queues.length));
+            Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Debug"));
+            Memo.create(queues, new Procedure({ x: 700, y: 400 }, "Debug"));
+            c = new Connection({x : 280, y : 100});
+            c.path.push({x : 200, y : 320});
+            c.next = queues[1];
+            c.state.output = "F";
+            c.position = c.path[0];
+            Memo.create(queues[0].connections, c);
+            c = new Connection({x : 280, y : 400});
+            c.path.push({x : 620, y : 400});
+            c.next = queues[2];
+            c.state.output = "A";
+            c.position = c.path[0];
+            Memo.create(queues[1].connections, c);
+            MediaDOM.procedureName.value = "Xdebug";
+            MediaDOM.createProcedure(event);
+            queues.length = 0;
+            Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Xdebug"));
+            MediaDOM.procedureName.value = "";
+        }
+    }
 }

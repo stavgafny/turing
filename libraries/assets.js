@@ -201,6 +201,8 @@ class Procedure extends Queue {
         this.set(entities.procedures[id]);
     }
 
+    get originID() { return this.name + Procedure.identifier + this.number; }
+
     get instruction() {
         const ids = this.instructions.map(o => o.id);
         return this.instructions[ids.indexOf(this.instructionID)];

@@ -11,6 +11,10 @@ class Engine {
 
     static get running() { return this.#runner !== null; }
 
+    static get stackCopy() {
+        return Object.assign([], this.#stack);
+    }
+
     static #getMatchingInput(connections) {
         // Gets list of connections
         // Returns the one that matches the current cell input and returns it if one exsists
@@ -113,10 +117,25 @@ class Engine {
             // Then it's a queue
             this.#nextConnection();
         }
+    }
 
+    static setCurrent(current) {
+        // Sets new engine current
 
-
-
+        // If changed current is a procedure reset it
+        // If stack isn't empty, reset it and set changed current to it's origin
+        if (this.current instanceof Procedure) {
+            this.current.reset();
+            if (this.#stack.length > 0) {
+                const {id, instructionID} = this.#stack[0];
+                const instructions = Procedure.get(id);
+                this.current.id = id;
+                this.current.set(instructions);
+                this.current.instruction = instructionID;
+                this.#stack = [];
+            }
+        }
+        this.current = current;
     }
 
     static run() {
@@ -135,7 +154,7 @@ class Engine {
     static reset() {
         this.stop();
         MemoryDOM.init(properties.memory);
-        this.current = queues[0];
+        this.setCurrent(queues[0]);
     }
 
     static update() {

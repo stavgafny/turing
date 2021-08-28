@@ -125,6 +125,7 @@ class MediaDOM {
     static redo = document.getElementById("redo");
     static procedureName = document.getElementById("procedure_name");
     static procedureSave = document.getElementById("procedure_save");
+    static procedureDelete = document.getElementById("procedure_delete");
 
     static #handleUndoRedo = (dom, method) => {
         // Gets DOM element and undo/redo method
@@ -158,9 +159,8 @@ class MediaDOM {
             Engine.stop();
     }
 
-    static createProcedure(event) {
+    static createProcedure() {
         // Creates a new produce from all the current queues
-        event.preventDefault();
         const produceName = this.procedureName.value;
         if (!(produceName.length > 0) || !isNaN(int(produceName)) || !this.#tester.test(produceName) || entities.procedures[produceName] || !(queues.length > 0)) {
             // there is all ready a procedure entity with that name / procedure has no content / procedure name isn't valid
@@ -168,6 +168,35 @@ class MediaDOM {
         }
         entities.createProcedure(produceName);
         EntitiesDOM.createEntity(produceName);
+    }
+
+    static deleteProcedure() {
+        // Deletes the procedure that is the current entity(if not default[queue])
+        if (entities.name !== entities.default) {
+            entities.procedures[entities.name] = null;
+            EntitiesDOM.deleteEntity(entities.name);
+        }
+    }
+}
+
+
+class EntitiesDOM {
+
+    static #dom = document.getElementById("entities");
+
+    static createEntity(name) {
+        const entity = document.createElement("button");
+        entity.id = entities.identifier + name;
+        entity.innerText = name;
+        entity.onclick = function () { entities.current = this.id; };
+        this.#dom.appendChild(entity);
+        return entity.id;
+    }
+
+    static deleteEntity(name) {
+        const entity = document.getElementById(entities.identifier + name);
+        console.log(entity);
+        this.#dom.removeChild(entity);
     }
 }
 
@@ -209,21 +238,6 @@ class SettingsDOM {
 
 }
 
-class EntitiesDOM {
-
-    static #dom = document.getElementById("entities");
-
-    static createEntity(name) {
-        const entity = document.createElement("button");
-        entity.id = entities.identifier + name;
-        entity.innerText = name;
-        entity.onclick = function () { entities.current = this.id; };
-        this.#dom.appendChild(entity);
-        return entity.id;
-    }
-
-}
-
 // Binds elements
 StateDOM.input.children[0].innerText = State.SPECIAL_KEYS.all;
 StateDOM.output.children[0].innerText = State.SPECIAL_KEYS.all;
@@ -232,8 +246,10 @@ StateDOM.input.onclick = function () { this.classList.add(StateDOM.setter); Stat
 StateDOM.output.onclick = function () { this.classList.add(StateDOM.setter); StateDOM.input.classList.remove(StateDOM.setter); }
 StateDOM.direction.onclick = function () { this.children[0].innerText = (this.children[0].innerText === 'R') ? 'L' : 'R'; }
 MediaDOM.playPause.onclick = function () { Engine.running ? Engine.stop() : Engine.run(); this.blur(); }
-MediaDOM.reset.onclick = function () { Engine.reset(); this.blur(); queues.map(q => q instanceof Procedure ? q.reset() : null)}
+MediaDOM.reset.onclick = function () { Engine.reset(); this.blur(); queues.map(q => q instanceof Procedure ? q.reset() : null) }
 MediaDOM.undo.onclick = function () { MediaDOM.callUndo(); }
 MediaDOM.redo.onclick = function () { MediaDOM.callRedo(); }
+MediaDOM.procedureSave.onclick = function() { MediaDOM.createProcedure(); }
+MediaDOM.procedureDelete.onclick = function() { MediaDOM.deleteProcedure(); }
 SettingsDOM.displayButton.onclick = function () { SettingsDOM.displaySettings(); }
 SettingsDOM.speedRange.oninput = function () { SettingsDOM.handleSpeedChange(); }

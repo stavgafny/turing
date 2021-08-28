@@ -14,7 +14,8 @@
     }
 }
 
-html, body {
+html,
+body {
     width: 100%;
     height: 100%;
     margin: 0;
@@ -28,8 +29,10 @@ body * {
     outline: none;
 }
 
-button, svg, #state div {
-    cursor:move;
+button,
+svg,
+#state div {
+    cursor: move;
 }
 
 ::-webkit-scrollbar {
@@ -44,12 +47,14 @@ button, svg, #state div {
     background: #ccc;
 }
 
-ul, li {
+ul,
+li {
     margin: 0;
     padding: 0;
 }
 
-#memory, #builder {
+#memory,
+#builder {
     width: 100%;
     height: 6%;
     background-color: #3a3a3a;
@@ -69,12 +74,12 @@ ul, li {
     text-align: center;
 }
 
-.memory-container > #memory_index {
+.memory-container>#memory_index {
     font-size: 3.8vh;
     color: #0bf;
 }
 
-.memory-container > #memory_size {
+.memory-container>#memory_size {
     font-size: 1.4vh;
     color: #fff;
 }
@@ -89,7 +94,7 @@ ul, li {
     border: 4px #000 solid;
 }
 
-#cells > li {
+#cells>li {
     min-width: 3vw;
     line-height: 4vh;
     margin: auto 0;
@@ -112,20 +117,19 @@ ul, li {
     padding: 0 8px;
 }
 
-#media > #play_pause {
+#media>#play_pause {
     height: 50%;
     margin: auto 0;
     padding: 0;
     background: transparent;
     box-sizing: border-box;
-
     border-color: transparent transparent transparent #6f9;
     transition: 200ms all ease;
     border-style: solid;
     border-width: 15px 0 15px 25px;
 }
 
-#media > #play_pause.pause {
+#media>#play_pause.pause {
     border-color: transparent transparent transparent #f88;
     border-style: double;
     border-width: 0 0 0 25px;
@@ -149,7 +153,8 @@ ul, li {
     transition: none;
 }
 
-#media > #undo, #media > #redo {
+#media>#undo,
+#media>#redo {
     height: 20px;
     margin: auto 0;
     fill: #444;
@@ -157,17 +162,21 @@ ul, li {
     cursor: crosshair;
 }
 
-#media > #undo.available, #media > #redo.available {
+#media>#undo.available,
+#media>#redo.available {
     fill: #aaa;
     cursor: move;
 }
 
-#media > #undo.available:hover, #media > #redo.available:hover {
+#media>#undo.available:hover,
+#media>#redo.available:hover {
     fill: #fff;
 }
 
-
-#media > #undo.activated, #media > #redo.activated, #media > #undo.activated:hover, #media > #redo.activated:hover {
+#media>#undo.activated,
+#media>#redo.activated,
+#media>#undo.activated:hover,
+#media>#redo.activated:hover {
     fill: #fa4;
     transition: all;
 }
@@ -189,7 +198,15 @@ ul, li {
 #procedure_save {
     width: 100%;
     font-size: 2vh;
-    background-color: #b44;
+    background-color: #6aa;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+
+#procedure_delete {
+    width: 100%;
+    font-size: 2vh;
+    background-color: #b54;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
 
 #state {
@@ -199,7 +216,7 @@ ul, li {
     padding: 0 4px;
 }
 
-#state > div {
+#state>div {
     width: 30px;
     height: 80%;
     margin: auto;
@@ -211,27 +228,27 @@ ul, li {
     transition: 400ms;
 }
 
-#state > div:hover {
+#state>div:hover {
     background-color: #999;
 }
 
-#state > div:active {
+#state>div:active {
     background-color: #555;
     transition: 0ms;
 }
 
-#state > div.set-state {
+#state>div.set-state {
     background-color: #999;
 }
 
-#state > div.set-state * {
+#state>div.set-state * {
     animation: blinker 350ms step-end infinite;
 }
 
-#state > div > p {
+#state>div>p {
     margin: auto;
     font-size: 25px;
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 #entities {
@@ -244,7 +261,7 @@ ul, li {
     overflow-x: auto;
 }
 
-#entities > button {
+#entities>button {
     background-color: #222;
     color: #ddd;
     border: none;
@@ -253,10 +270,11 @@ ul, li {
     margin: 4px;
     padding: 0 10px;
     font-size: 20px;
-    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
-#entities > button:hover, #entities > button:target {
+#entities>button:hover,
+#entities>button:target {
     background-color: #ddd;
     color: #222;
     padding: 0 16px;

@@ -15,6 +15,7 @@ const graphics = (function () {
         delete: "#f76",
         procedureAlive : "#9da",
         procedureFinished : "#50000099",
+        procedureConnectionStep : "#bdf",
         get current() { return Engine.running ? "#44e" : "#124"; }
     };
 
@@ -197,6 +198,10 @@ const graphics = (function () {
             procedure: procedure => {
                 const { x, y } = procedure.position;
                 const value = Math.sqrt(2) * sizes.queue;
+                let nested = [];
+                if (procedure === Engine.current) {
+                    nested = Engine.stackCopy;
+                }
                 push();
                 // procedure
                 translate(x, y);
@@ -212,7 +217,8 @@ const graphics = (function () {
                 stroke(0);
                 push();
                 rotate(procedure.progress);
-                fill(procedure.finished ? colors.procedureFinished : colors.procedureAlive);
+                fill(procedure.finished ? colors.procedureFinished : procedure.connectionStep ? colors.procedureConnectionStep : colors.procedureAlive);
+              
                 rect(0, 0, value, value, 10);
                 pop();
                 ellipse(0, 0, value);
@@ -220,6 +226,10 @@ const graphics = (function () {
                 fill(0);
                 textSize(sizes.queue / Math.sqrt(procedure.name.length * 2));
                 text(procedure.name, 0, 0);
+                textSize(30);
+                let m = "";
+                for (let i = 0; i < nested.length; i++) m += ".";
+                text(m, 0, 15);
                 pop();
                 // All procedure connections
                 drawConnections(procedure);

@@ -236,7 +236,7 @@ const graphics = (function () {
                 const id = isNaN(int(instructionID)) ?
                 instructionID.split(Procedure.identifier)[0] :
                 "q" + instructionID;
-                text(id, 0, 18);
+                text(id, 0, 24);
                 pop();
                 // All procedure connections
                 drawConnections(procedure);

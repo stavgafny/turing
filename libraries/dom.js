@@ -116,7 +116,7 @@ class MediaDOM {
 
     static #undoRedoAvailable = "available";
     static #undoRedoActivation = "activated";
-    static #undoRedoActivationDelay = 1;
+    static #procedureDeleteable = "deleteable";
     static #tester = /^[A-Za-z0-9]*$/;
 
     static playPause = document.getElementById("play_pause");
@@ -124,8 +124,14 @@ class MediaDOM {
     static undo = document.getElementById("undo");
     static redo = document.getElementById("redo");
     static procedureName = document.getElementById("procedure_name");
-    static procedureSave = document.getElementById("procedure_save");
+    static procedureSet = document.getElementById("procedure_set");
     static procedureDelete = document.getElementById("procedure_delete");
+
+    static get #validSet() {
+        // Must: not be empty, start with a letter, only alphabet and numbers, queues aren't empty, not default entity [queue]
+        const value = this.procedureName.value;
+        return value.length > 0 && isNaN(int(value)) && this.#tester.test(value) && queues.length > 0 && value !== entities.default;
+    }
 
     static #handleUndoRedo = (dom, method) => {
         // Gets DOM element and undo/redo method
@@ -133,7 +139,7 @@ class MediaDOM {
         if (!method)
             return false;
         dom.classList.add(this.#undoRedoActivation);
-        setTimeout(() => dom.classList.remove(this.#undoRedoActivation), this.#undoRedoActivationDelay);
+        setTimeout(() => dom.classList.remove(this.#undoRedoActivation), 0);
         this.refreshUndoRedo();
         return true;
     }
@@ -159,23 +165,39 @@ class MediaDOM {
             Engine.stop();
     }
 
+    static updateProcedureButtons() {
+        const value = this.procedureName.value;
+        const exsists = !!entities.procedures[value];
+        this.procedureSet.disabled = !this.#validSet || exsists;
+        this.procedureDelete.classList = [];
+        if (exsists) {
+            this.procedureDelete.classList.add(this.#procedureDeleteable);
+        }
+    }
+
     static createProcedure() {
         // Creates a new produce from all the current queues
-        const produceName = this.procedureName.value;
-        if (!(produceName.length > 0) || !isNaN(int(produceName)) || !this.#tester.test(produceName) || entities.procedures[produceName] || !(queues.length > 0)) {
+        const value = this.procedureName.value;
+        if (!this.#validSet) {
             // there is all ready a procedure entity with that name / procedure has no content / procedure name isn't valid
             return false;
         }
-        entities.createProcedure(produceName);
-        EntitiesDOM.createEntity(produceName);
+        if (!entities.procedures[value]) {
+            EntitiesDOM.createEntity(value);
+        }
+        entities.setProcedure(value);
+        this.updateProcedureButtons();
     }
 
     static deleteProcedure() {
-        // Deletes the procedure that is the current entity(if not default[queue])
-        if (entities.name !== entities.default) {
-            delete entities.procedures[entities.name];
-            EntitiesDOM.deleteEntity(entities.name);
+        // Deletes the procedure with that name(if not default[queue])
+        if (!this.procedureDelete.classList.contains(this.#procedureDeleteable)) {
+            return;
         }
+        const value = this.procedureName.value;
+        delete entities.procedures[value];
+        EntitiesDOM.deleteEntity(value);
+        this.updateProcedureButtons();
     }
 }
 
@@ -198,8 +220,10 @@ class EntitiesDOM {
         if (entity) {
             this.#dom.removeChild(entity);
         }
-        // Set entity to default [queue]
-        entities.current = entities.identifier + entities.default;
+        if (entities.name === name) {
+            // Deleted current entity, set entity to default [queue]
+            entities.current = entities.identifier + entities.default;
+        }
     }
 }
 
@@ -234,7 +258,7 @@ class SettingsDOM {
         this.#windowDisplayMode(true);
     }
 
-    static handleSpeedChange() {
+    static updateSpeedChange() {
         properties.speed = this.speedRange.value;
         this.speedTracker.innerText = properties.speed + "ms";
     }
@@ -252,7 +276,8 @@ MediaDOM.playPause.onclick = function () { Engine.running ? Engine.stop() : Engi
 MediaDOM.reset.onclick = function () { Engine.reset(); this.blur(); queues.map(q => q instanceof Procedure ? q.reset() : null) }
 MediaDOM.undo.onclick = function () { MediaDOM.callUndo(); }
 MediaDOM.redo.onclick = function () { MediaDOM.callRedo(); }
-MediaDOM.procedureSave.onclick = function() { MediaDOM.createProcedure(); }
+MediaDOM.procedureName.oninput = function() { MediaDOM.updateProcedureButtons(); }
+MediaDOM.procedureSet.onclick = function() { MediaDOM.createProcedure(); }
 MediaDOM.procedureDelete.onclick = function() { MediaDOM.deleteProcedure(); }
 SettingsDOM.displayButton.onclick = function () { SettingsDOM.displaySettings(); }
-SettingsDOM.speedRange.oninput = function () { SettingsDOM.handleSpeedChange(); }
+SettingsDOM.speedRange.oninput = function () { SettingsDOM.updateSpeedChange(); }

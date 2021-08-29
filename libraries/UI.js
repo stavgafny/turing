@@ -205,14 +205,25 @@ function mousePressed(e) {
 
     if (e.button === MOUSE_CLICK.right) return;
 
-    if (Mouse.onDelete)
+    if (Mouse.onDelete) {
         // Deletes object[queue/connection]
-        return Memo.delete(Mouse.onDelete);
+        Memo.delete(Mouse.onDelete);
+        if (queues.length === 0) {
+            // If queues are now empty
+            MediaDOM.updateProcedureButtons();
+        }
+        return;
+    }
 
     if (Mouse.fitQueue) {
         // Creates a new queue/procedure
         const id = (entities.name === entities.default) ? getNewQueueId() : entities.name;
-        return Memo.create(queues, new entities.current(Mouse.position, id));
+        Memo.create(queues, new entities.current(Mouse.position, id));
+        if (queues.length === 1) {
+            // If valid name is entered and queues now not empty
+            MediaDOM.updateProcedureButtons();
+        }
+        return;
     }
 
     if (buildConnection) {

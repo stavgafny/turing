@@ -195,24 +195,42 @@ li {
     width: 100%;
 }
 
-#procedure_save {
+#procedure_set {
     width: 100%;
     font-size: 2vh;
-    background-color: #6aa;
-    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    background-color: #6b9;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+#procedure_set:disabled {
+    background-color: #888;
+    color: #000;
+    border: 2px black solid;
 }
 
 #procedure_delete {
-    width: 100%;
-    font-size: 2vh;
-    background-color: #b54;
-    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    height: 4vh;
+    width: 3vw;
+    margin: auto;
+    fill: #999;
+    background-color: transparent;
+    border-radius: 100px;
+    transition: 200ms;
+}
+
+#procedure_delete.deleteable {
+    fill: #d66;
+}
+
+#procedure_delete.deleteable:hover {
+    transform: rotate(30deg);
+    fill: #d88;
 }
 
 #state {
-    background-color: #2a2a2f;
     display: inline-flex;
     gap: 4px;
+    background: #222;
     padding: 0 4px;
 }
 
@@ -222,6 +240,7 @@ li {
     margin: auto;
     display: flex;
     flex: 1;
+    background-color: #2a2a2f;
     border: 3px #ccc solid;
     color: #ddd;
     border-radius: 6px;

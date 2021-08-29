@@ -9,7 +9,7 @@ const entities = {
     get current() { return (this.name === this.default) ? Queue : Procedure; },
     set current(value) { window.location.hash = value; },
     procedures: {},
-    createProcedure(name) {
+    setProcedure(name) {
         const procedureInstructions = [];
         queues.map(queue => {
             const id = queue instanceof Procedure ? queue.originID : queue.id;
@@ -37,11 +37,11 @@ function setup() {
     angleMode(DEGREES);
     Engine.reset();
     SettingsDOM.speedRange.value = properties.speed;
-    SettingsDOM.handleSpeedChange();
-    const defaultEntity = EntitiesDOM.createEntity(entities.default);
     entities.current = "";
-    entities.current = defaultEntity;
-    debug().loop();
+    entities.current = EntitiesDOM.createEntity(entities.default);
+    SettingsDOM.updateSpeedChange();
+    MediaDOM.updateProcedureButtons();
+    //debug().loop();
 }
 
 function draw() {

@@ -92,7 +92,9 @@ class Engine {
 
     static #tick() {
         // Next mechine step
-        if (!this.current) return;
+
+        // Stop engine from ticking when there is no next
+        if (!this.current) return this.stop();
 
         // If currently on connection tick to the connected side
         if (this.current instanceof Connection) {

@@ -41,7 +41,7 @@ function setup() {
     entities.current = EntitiesDOM.createEntity(entities.default);
     SettingsDOM.updateSpeedChange();
     ProcedureDOM.update();
-    //debug().loop();
+    debug().loop();
 }
 
 function draw() {
@@ -73,23 +73,23 @@ function debug() {
             queues[0].connections[0].next = queues[0];
             let c = queues[0].connections.pop();
             Memo.create(queues[0].connections, c);
-            MediaDOM.procedureName.value = "Debug";
-            MediaDOM.createProcedure(event);
+            ProcedureDOM.name.value = "Debug";
+            ProcedureDOM.setProcedure(event);
             queues.length = 0;
             Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Debug"));
-            MediaDOM.procedureName.value = "Debugx";
-            MediaDOM.createProcedure(event);
+            ProcedureDOM.name.value = "Debugx";
+            ProcedureDOM.setProcedure(event);
             queues.length = 0;
             Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Debugx"));
-            MediaDOM.procedureName.value = "Debugxs";
-            MediaDOM.createProcedure(event);
+            ProcedureDOM.name.value = "Debugxs";
+            ProcedureDOM.setProcedure(event);
             queues.length = 0;
             Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Debugxs"));
-            MediaDOM.procedureName.value = "Debugxss";
-            MediaDOM.createProcedure(event);
+            ProcedureDOM.name.value = "Debugxss";
+            ProcedureDOM.setProcedure(event);
             queues.length = 0;
             Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Debugxss"));
-            MediaDOM.procedureName.value = "";
+            ProcedureDOM.name.value = "";
         },
         nested : function() {
             Memo.create(queues, new Queue({ x: 200, y: 400 }, queues.length));

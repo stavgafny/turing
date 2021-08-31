@@ -246,12 +246,8 @@ class SettingsDOM {
         this.settingsWindow.classList[mode](this.#display);
     }
 
-    static escape() {
-        this.#windowDisplayMode(false);
-    }
-
-    static displaySettings() {
-        this.#windowDisplayMode(true);
+    static toggleSettings() {
+        this.#windowDisplayMode(!this.displayed);
     }
 
     static updateSpeedChange() {
@@ -275,5 +271,5 @@ StateDOM.direction.onclick = function () { this.children[0].innerText = (this.ch
 ProcedureDOM.name.oninput = function() { ProcedureDOM.update(); }
 ProcedureDOM.set.onclick = function() { ProcedureDOM.setProcedure(); }
 ProcedureDOM.del.onclick = function() { ProcedureDOM.deleteProcedure(); }
-SettingsDOM.displayButton.onclick = function () { SettingsDOM.displaySettings(); }
+SettingsDOM.displayButton.onclick = function () { SettingsDOM.toggleSettings(); }
 SettingsDOM.speedRange.oninput = function () { SettingsDOM.updateSpeedChange(); }

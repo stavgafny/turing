@@ -270,7 +270,7 @@ function mousePressed(e) {
 
 function keyPressed(e) {
     if (e.keyCode === ALT_KEY) e.preventDefault();
-    if (e.keyCode === ESCAPE_KEY && !StateDOM.onEdit) SettingsDOM.displayed ? SettingsDOM.escape() : SettingsDOM.displaySettings();
+    if (e.keyCode === ESCAPE_KEY && !StateDOM.onEdit) SettingsDOM.toggleSettings();
 
     if (StateDOM.handleKeyInput(e.keyCode)) return;
     if (document.activeElement === MediaDOM.procedureName || document.activeElement === ProcedureDOM.name) return;

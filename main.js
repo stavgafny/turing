@@ -10,15 +10,7 @@ const entities = {
     set current(value) { window.location.hash = value; },
     procedures: {},
     setProcedure(name) {
-        const procedureInstructions = [];
-        queues.map(queue => {
-            const id = queue instanceof Procedure ? queue.originID : queue.id;
-            procedureInstructions.push({
-                id,
-                connections : queue.connections.map(connection => ({ state: connection.state, next: connection.next.id }))
-            });
-        });
-        this.procedures[name] = procedureInstructions;
+        this.procedures[name] = toProcedure();
     }
 };
 
@@ -26,6 +18,18 @@ const properties = {
     speed: 200,
     memory: `200@|${State.SPECIAL_KEYS.edge}:1|0:10|R:1|1:1|?1$1`
 };
+
+function toProcedure() {
+    const procedureInstructions = [];
+    queues.map(queue => {
+        const id = queue instanceof Procedure ? queue.originID : queue.id;
+        procedureInstructions.push({
+            id,
+            connections: queue.connections.map(connection => ({ state: connection.state, next: connection.next.id }))
+        });
+    });
+    return procedureInstructions;
+}
 
 function setup() {
     createCanvas(window.innerWidth, window.innerHeight * CANVAS_HEIGHT_WRAPPER);
@@ -61,12 +65,14 @@ function draw() {
         Engine.setCurrent(queues[0]);
     if (Engine.running)
         Engine.update();
+
+    ProcedureDOM.update();
 }
 
 function debug() {
 
     return {
-        loop : function() {
+        loop: function () {
             Memo.create(queues, new Queue({ x: 200, y: 400 }, queues.length));
             queues[0].build({ x: 280, y: 400 });
             queues[0].next({ x: 520, y: 400 });
@@ -90,7 +96,7 @@ function debug() {
             queues.length = 0;
             Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Debugxss"));
         },
-        nested : function() {
+        nested: function () {
             Memo.create(queues, new Queue({ x: 200, y: 400 }, queues.length));
             Memo.create(queues, new Queue({ x: 600, y: 400 }, queues.length));
             Memo.create(queues, new Queue({ x: 900, y: 400 }, queues.length));
@@ -112,14 +118,14 @@ function debug() {
             Memo.create(queues, new Queue({ x: 200, y: 100 }, queues.length));
             Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Debug"));
             Memo.create(queues, new Procedure({ x: 700, y: 400 }, "Debug"));
-            c = new Connection({x : 280, y : 100});
-            c.path.push({x : 200, y : 320});
+            c = new Connection({ x: 280, y: 100 });
+            c.path.push({ x: 200, y: 320 });
             c.next = queues[1];
             c.state.output = "F";
             c.position = c.path[0];
             Memo.create(queues[0].connections, c);
-            c = new Connection({x : 280, y : 400});
-            c.path.push({x : 620, y : 400});
+            c = new Connection({ x: 280, y: 400 });
+            c.path.push({ x: 620, y: 400 });
             c.next = queues[2];
             c.state.output = "A";
             c.position = c.path[0];

@@ -83,14 +83,8 @@ class MediaDOM {
     }
 
     static refreshUndoRedo() {
-        if (Memo.hasUndo())
-            this.undo.classList.add(this.#undoRedoAvailable);
-        else
-            this.undo.classList.remove(this.#undoRedoAvailable);
-        if (Memo.hasRedo())
-            this.redo.classList.add(this.#undoRedoAvailable);
-        else
-            this.redo.classList.remove(this.#undoRedoAvailable);
+        this.undo.classList.toggle(this.#undoRedoAvailable, Memo.hasUndo());
+        this.redo.classList.toggle(this.#undoRedoAvailable, Memo.hasRedo());
     }
 
     static callUndo() {
@@ -180,17 +174,23 @@ class ProcedureDOM {
         this.set.disabled = !this.#validName;
         this.del.disabled = !exsists;
         if (!this.set.disabled) {
-            this.set.classList = [exsists ? this.#setUpdate : ""];
+            this.set.classList.toggle(this.#setUpdate, exsists);
         }
     }
 
     static setProcedure() {
-        EntitiesDOM.createEntity(this.value);
+        // Set procedure
+
+        if (!entities.procedures[this.value]) {
+            // If no procedure -> no entity, create one
+            EntitiesDOM.createEntity(this.value);
+        }
         entities.setProcedure(this.value);
         this.update();
     }
 
     static deleteProcedure() {
+        // Delete procedure
         delete entities.procedures[this.value];
         EntitiesDOM.deleteEntity(this.value);
         this.update();
@@ -242,12 +242,11 @@ class SettingsDOM {
             const element = children[i];
             element.disabled = !mode;
         }
-        mode = mode ? "add" : "remove";
-        this.settingsWindow.classList[mode](this.#display);
+        this.settingsWindow.classList.toggle(this.#display, mode);
     }
 
-    static toggleSettings() {
-        this.#windowDisplayMode(!this.displayed);
+    static toggleSettings(force = !this.displayed) {
+        this.#windowDisplayMode(force);
     }
 
     static updateSpeedChange() {

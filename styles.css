@@ -287,7 +287,7 @@ li {
     display: flex;
     background-color: #444;
     border-radius: 100px;
-    padding: 0 20px;
+    padding: 0 10px;
     overflow-x: auto;
 }
 

@@ -107,8 +107,8 @@ function debug() {
             c = queues[1].connections.pop();
             c.state.output = "D";
             Memo.create(queues[1].connections, c);
-            MediaDOM.procedureName.value = "Debug";
-            MediaDOM.createProcedure(event);
+            ProcedureDOM.name.value = "Debug";
+            ProcedureDOM.setProcedure();
             queues.length = 0;
             Memo.create(queues, new Queue({ x: 200, y: 100 }, queues.length));
             Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Debug"));
@@ -125,11 +125,11 @@ function debug() {
             c.state.output = "A";
             c.position = c.path[0];
             Memo.create(queues[1].connections, c);
-            MediaDOM.procedureName.value = "Xdebug";
-            MediaDOM.createProcedure(event);
+            ProcedureDOM.name.value = "Xdebug";
+            ProcedureDOM.setProcedure();
             queues.length = 0;
             Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Xdebug"));
-            MediaDOM.procedureName.value = "";
+            ProcedureDOM.name.value = "";
         }
     }
 }

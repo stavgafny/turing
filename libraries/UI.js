@@ -273,7 +273,7 @@ function keyPressed(e) {
     if (e.keyCode === ESCAPE_KEY && !StateDOM.onEdit) SettingsDOM.displayed ? SettingsDOM.escape() : SettingsDOM.displaySettings();
 
     if (StateDOM.handleKeyInput(e.keyCode)) return;
-    if (document.activeElement === MediaDOM.procedureName) return;
+    if (document.activeElement === MediaDOM.procedureName || document.activeElement === ProcedureDOM.name) return;
 
     if (e.keyCode === KEYBINDS.playPause) return MediaDOM.playPause.click();
     if (e.keyCode === KEYBINDS.undo) return MediaDOM.callUndo();

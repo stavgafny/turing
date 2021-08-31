@@ -40,7 +40,7 @@ function setup() {
     entities.current = "";
     entities.current = EntitiesDOM.createEntity(entities.default);
     SettingsDOM.updateSpeedChange();
-    MediaDOM.updateProcedureButtons();
+    ProcedureDOM.update();
     //debug().loop();
 }
 

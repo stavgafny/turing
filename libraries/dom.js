@@ -60,6 +60,51 @@ class MemoryDOM {
 }
 
 
+class MediaDOM {
+    // All media control
+
+    static #undoRedoAvailable = "available";
+    static #undoRedoActivation = "activated";
+
+    static playPause = document.getElementById("play_pause");
+    static reset = document.getElementById("reset");
+    static undo = document.getElementById("undo");
+    static redo = document.getElementById("redo");
+
+    static #handleUndoRedo = (dom, method) => {
+        // Gets DOM element and undo/redo method
+        // Effacts DOM element if there was an undo/redo method then
+        if (!method)
+            return false;
+        dom.classList.add(this.#undoRedoActivation);
+        setTimeout(() => dom.classList.remove(this.#undoRedoActivation), 0);
+        this.refreshUndoRedo();
+        return true;
+    }
+
+    static refreshUndoRedo() {
+        if (Memo.hasUndo())
+            this.undo.classList.add(this.#undoRedoAvailable);
+        else
+            this.undo.classList.remove(this.#undoRedoAvailable);
+        if (Memo.hasRedo())
+            this.redo.classList.add(this.#undoRedoAvailable);
+        else
+            this.redo.classList.remove(this.#undoRedoAvailable);
+    }
+
+    static callUndo() {
+        if (this.#handleUndoRedo(this.undo, Memo.undo()))
+            Engine.stop();
+    }
+
+    static callRedo() {
+        if (this.#handleUndoRedo(this.redo, Memo.redo()))
+            Engine.stop();
+    }
+}
+
+
 class StateDOM {
     // Structures HTML state element
 
@@ -111,93 +156,40 @@ class StateDOM {
 }
 
 
-class MediaDOM {
-    // All media control
+class ProcedureDOM {
+    // Procedure edits
 
-    static #undoRedoAvailable = "available";
-    static #undoRedoActivation = "activated";
-    static #procedureDeleteable = "deleteable";
     static #tester = /^[A-Za-z0-9]*$/;
+    
+    static name = document.getElementById("procedure_name");
+    static set = document.getElementById("procedure_set");
+    static del = document.getElementById("procedure_del");
 
-    static playPause = document.getElementById("play_pause");
-    static reset = document.getElementById("reset");
-    static undo = document.getElementById("undo");
-    static redo = document.getElementById("redo");
-    static procedureName = document.getElementById("procedure_name");
-    static procedureSet = document.getElementById("procedure_set");
-    static procedureDelete = document.getElementById("procedure_delete");
-
-    static get #validSet() {
-        // Must: not be empty, start with a letter, only alphabet and numbers, queues aren't empty, not default entity [queue]
-        const value = this.procedureName.value;
-        return value.length > 0 && isNaN(int(value)) && this.#tester.test(value) && queues.length > 0 && value !== entities.default;
+    static get #validName() {
+        // Must: not be empty, only alphabet and numbers starting with a letter, queues aren't empty, not default entity [queue]
+        return this.value.length > 0 && isNaN(int(this.value)) && this.value !== entities.default &&
+        this.#tester.test(this.value) && queues.length > 0;
     }
 
-    static #handleUndoRedo = (dom, method) => {
-        // Gets DOM element and undo/redo method
-        // Effacts DOM element if there was an undo/redo method then
-        if (!method)
-            return false;
-        dom.classList.add(this.#undoRedoActivation);
-        setTimeout(() => dom.classList.remove(this.#undoRedoActivation), 0);
-        this.refreshUndoRedo();
-        return true;
+    static get value() { return this.name.value; }
+
+    static update() {
+        // Updates buttons according the given name
+        const exsists = !!entities.procedures[this.value];
+        this.set.disabled = !this.#validName || exsists;
+        this.del.disabled = !exsists;
     }
 
-    static refreshUndoRedo() {
-        if (Memo.hasUndo())
-            this.undo.classList.add(this.#undoRedoAvailable);
-        else
-            this.undo.classList.remove(this.#undoRedoAvailable);
-        if (Memo.hasRedo())
-            this.redo.classList.add(this.#undoRedoAvailable);
-        else
-            this.redo.classList.remove(this.#undoRedoAvailable);
-    }
-
-    static callUndo() {
-        if (this.#handleUndoRedo(this.undo, Memo.undo()))
-            Engine.stop();
-    }
-
-    static callRedo() {
-        if (this.#handleUndoRedo(this.redo, Memo.redo()))
-            Engine.stop();
-    }
-
-    static updateProcedureButtons() {
-        const value = this.procedureName.value;
-        const exsists = !!entities.procedures[value];
-        this.procedureSet.disabled = !this.#validSet || exsists;
-        this.procedureDelete.classList = [];
-        if (exsists) {
-            this.procedureDelete.classList.add(this.#procedureDeleteable);
-        }
-    }
-
-    static createProcedure() {
-        // Creates a new produce from all the current queues
-        const value = this.procedureName.value;
-        if (!this.#validSet) {
-            // there is all ready a procedure entity with that name / procedure has no content / procedure name isn't valid
-            return false;
-        }
-        if (!entities.procedures[value]) {
-            EntitiesDOM.createEntity(value);
-        }
-        entities.setProcedure(value);
-        this.updateProcedureButtons();
+    static setProcedure() {
+        EntitiesDOM.createEntity(this.value);
+        entities.setProcedure(this.value);
+        this.update();
     }
 
     static deleteProcedure() {
-        // Deletes the procedure with that name(if not default[queue])
-        if (!this.procedureDelete.classList.contains(this.#procedureDeleteable)) {
-            return;
-        }
-        const value = this.procedureName.value;
-        delete entities.procedures[value];
-        EntitiesDOM.deleteEntity(value);
-        this.updateProcedureButtons();
+        delete entities.procedures[this.value];
+        EntitiesDOM.deleteEntity(this.value);
+        this.update();
     }
 }
 
@@ -266,18 +258,18 @@ class SettingsDOM {
 }
 
 // Binds elements
+MediaDOM.playPause.onclick = function () { Engine.running ? Engine.stop() : Engine.run(); this.blur(); }
+MediaDOM.reset.onclick = function () { Engine.reset(); this.blur(); queues.map(q => q instanceof Procedure ? q.reset() : null) }
+MediaDOM.undo.onclick = function () { MediaDOM.callUndo(); }
+MediaDOM.redo.onclick = function () { MediaDOM.callRedo(); }
 StateDOM.input.children[0].innerText = State.SPECIAL_KEYS.all;
 StateDOM.output.children[0].innerText = State.SPECIAL_KEYS.all;
 StateDOM.direction.children[0].innerText = State.direction.right;
 StateDOM.input.onclick = function () { this.classList.add(StateDOM.setter); StateDOM.output.classList.remove(StateDOM.setter); }
 StateDOM.output.onclick = function () { this.classList.add(StateDOM.setter); StateDOM.input.classList.remove(StateDOM.setter); }
 StateDOM.direction.onclick = function () { this.children[0].innerText = (this.children[0].innerText === 'R') ? 'L' : 'R'; }
-MediaDOM.playPause.onclick = function () { Engine.running ? Engine.stop() : Engine.run(); this.blur(); }
-MediaDOM.reset.onclick = function () { Engine.reset(); this.blur(); queues.map(q => q instanceof Procedure ? q.reset() : null) }
-MediaDOM.undo.onclick = function () { MediaDOM.callUndo(); }
-MediaDOM.redo.onclick = function () { MediaDOM.callRedo(); }
-MediaDOM.procedureName.oninput = function() { MediaDOM.updateProcedureButtons(); }
-MediaDOM.procedureSet.onclick = function() { MediaDOM.createProcedure(); }
-MediaDOM.procedureDelete.onclick = function() { MediaDOM.deleteProcedure(); }
+ProcedureDOM.name.oninput = function() { ProcedureDOM.update(); }
+ProcedureDOM.set.onclick = function() { ProcedureDOM.setProcedure(); }
+ProcedureDOM.del.onclick = function() { ProcedureDOM.deleteProcedure(); }
 SettingsDOM.displayButton.onclick = function () { SettingsDOM.displaySettings(); }
 SettingsDOM.speedRange.oninput = function () { SettingsDOM.updateSpeedChange(); }

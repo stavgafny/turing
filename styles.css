@@ -109,7 +109,6 @@ li {
 }
 
 #media {
-    width: 300px;
     height: 100% - 2px;
     display: flex;
     background: #222;
@@ -181,52 +180,6 @@ li {
     transition: all;
 }
 
-.procedure {
-    width: 120px;
-    height: 100%;
-    text-align: center;
-}
-
-#procedure_name {
-    text-align: center;
-    font-size: 2vh;
-    border: none;
-    border-radius: 4px;
-    width: 100%;
-}
-
-#procedure_set {
-    width: 100%;
-    font-size: 2vh;
-    background-color: #6b9;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-}
-
-#procedure_set:disabled {
-    background-color: #888;
-    color: #000;
-    border: 2px black solid;
-}
-
-#procedure_delete {
-    height: 4vh;
-    width: 3vw;
-    margin: auto;
-    fill: #999;
-    background-color: transparent;
-    border-radius: 100px;
-    transition: 200ms;
-}
-
-#procedure_delete.deleteable {
-    fill: #d66;
-}
-
-#procedure_delete.deleteable:hover {
-    transform: rotate(30deg);
-    fill: #d88;
-}
-
 #state {
     display: inline-flex;
     gap: 4px;
@@ -270,6 +223,56 @@ li {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+#procedure {
+    height: 100%;
+    padding: 0 5px;
+    display: flex;
+    gap: 5px;
+    background-color: #2a2a2a;
+    text-align: center;
+}
+
+#procedure_name {
+    width: 100px;
+    margin: 4px 0;
+    color: #ddd;
+    background-color: transparent;
+    border: 2px #aaa solid;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1.25em;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+#procedure>button {
+    margin: auto;
+    border: none;
+    border-radius: 100px;
+    padding: 6px;
+    fill: #1a1a1a;
+    transition: 150ms;
+}
+
+#procedure>button:disabled {
+    background-color: #aaa;
+}
+
+#procedure_set {
+    background-color: #8d9;
+}
+
+#procedure_set:hover {
+    background-color: #afa;
+}
+
+#procedure_del {
+    background-color: #d55;
+}
+
+#procedure_del:hover {
+    background-color: #e77;
+}
+
 #entities {
     width: 100%;
     height: 100%;
@@ -300,8 +303,10 @@ li {
 }
 
 #settings_button {
-    width: 52px;
+    width: 50px;
+    height: auto;
     margin: auto 8px;
+    padding: 4px;
     border-radius: 100px;
     background-color: #aaa;
     fill: #333;

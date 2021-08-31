@@ -210,7 +210,7 @@ function mousePressed(e) {
         Memo.delete(Mouse.onDelete);
         if (queues.length === 0) {
             // If queues are now empty
-            MediaDOM.updateProcedureButtons();
+            ProcedureDOM.update();
         }
         return;
     }
@@ -221,7 +221,7 @@ function mousePressed(e) {
         Memo.create(queues, new entities.current(Mouse.position, id));
         if (queues.length === 1) {
             // If valid name is entered and queues now not empty
-            MediaDOM.updateProcedureButtons();
+            ProcedureDOM.update();
         }
         return;
     }

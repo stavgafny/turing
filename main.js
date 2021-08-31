@@ -74,22 +74,21 @@ function debug() {
             let c = queues[0].connections.pop();
             Memo.create(queues[0].connections, c);
             ProcedureDOM.name.value = "Debug";
-            ProcedureDOM.setProcedure(event);
+            ProcedureDOM.setProcedure();
             queues.length = 0;
             Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Debug"));
             ProcedureDOM.name.value = "Debugx";
-            ProcedureDOM.setProcedure(event);
+            ProcedureDOM.setProcedure();
             queues.length = 0;
             Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Debugx"));
             ProcedureDOM.name.value = "Debugxs";
-            ProcedureDOM.setProcedure(event);
+            ProcedureDOM.setProcedure();
             queues.length = 0;
             Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Debugxs"));
             ProcedureDOM.name.value = "Debugxss";
-            ProcedureDOM.setProcedure(event);
+            ProcedureDOM.setProcedure();
             queues.length = 0;
             Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Debugxss"));
-            ProcedureDOM.name.value = "";
         },
         nested : function() {
             Memo.create(queues, new Queue({ x: 200, y: 400 }, queues.length));
@@ -129,7 +128,6 @@ function debug() {
             ProcedureDOM.setProcedure();
             queues.length = 0;
             Memo.create(queues, new Procedure({ x: 200, y: 400 }, "Xdebug"));
-            ProcedureDOM.name.value = "";
         }
     }
 }

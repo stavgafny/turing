@@ -265,6 +265,14 @@ li {
     background-color: #afa;
 }
 
+#procedure_set.update {
+    background-color: #fd8;
+}
+
+#procedure_set.update:hover {
+    background-color: #fea;
+}
+
 #procedure_del {
     background-color: #d55;
 }

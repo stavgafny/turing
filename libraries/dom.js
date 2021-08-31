@@ -160,6 +160,7 @@ class ProcedureDOM {
     // Procedure edits
 
     static #tester = /^[A-Za-z0-9]*$/;
+    static #setUpdate = "update";
     
     static name = document.getElementById("procedure_name");
     static set = document.getElementById("procedure_set");
@@ -176,8 +177,11 @@ class ProcedureDOM {
     static update() {
         // Updates buttons according the given name
         const exsists = !!entities.procedures[this.value];
-        this.set.disabled = !this.#validName || exsists;
+        this.set.disabled = !this.#validName;
         this.del.disabled = !exsists;
+        if (!this.set.disabled) {
+            this.set.classList = [exsists ? this.#setUpdate : ""];
+        }
     }
 
     static setProcedure() {

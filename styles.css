@@ -281,6 +281,17 @@ li {
     background-color: #e77;
 }
 
+#clear_button {
+    padding: 4px;
+    background-color: #fff;
+    border: #aaa 2px initial;
+    border-radius: 5px;
+}
+
+#clear_button:disabled {
+    background-color: transparent;
+}
+
 #entities {
     width: 100%;
     height: 100%;

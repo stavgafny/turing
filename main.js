@@ -19,6 +19,8 @@ const properties = {
     memory: `200@|${State.SPECIAL_KEYS.edge}:1|0:10|R:1|1:1|?1$1`
 };
 
+let previousQueueCount = 0;
+
 function setup() {
     createCanvas(window.innerWidth, window.innerHeight * CANVAS_HEIGHT_WRAPPER);
     cursor(CROSS);
@@ -53,6 +55,10 @@ function draw() {
         Engine.setCurrent(queues[0]);
     if (Engine.running)
         Engine.update();
+    if (previousQueueCount !== queues.length) {
+        previousQueueCount = queues.length;
+        updateDOMOnQueueChange();
+    }
 }
 
 function debug() {

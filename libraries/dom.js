@@ -236,7 +236,6 @@ class SettingsDOM {
 
     static #display = "display";
 
-    static displayButton = document.getElementById('settings_button');
     static settingsWindow = document.getElementById("settings");
     static speedRange = document.getElementById("speed");
     static speedTracker = document.getElementById("speed_tracker");
@@ -263,7 +262,22 @@ class SettingsDOM {
 
 }
 
+
+function updateDOMOnQueueChange() {
+    if (queues.length <= 1) {
+        // If queues are/were empty
+        ProcedureDOM.update();
+        clearButton.disabled = !(queues.length > 0);
+    }
+}
+
+
+// Set floating buttons(with no clear structure)
+const clearButton = document.getElementById("clear_button");
+const settingsButton = document.getElementById("settings_button");
+
 // Binds elements
+clearButton.onclick = function() { Memo.clear(); }
 MediaDOM.playPause.onclick = function () { Engine.running ? Engine.stop() : Engine.run(); this.blur(); }
 MediaDOM.reset.onclick = function () { Engine.reset(); this.blur(); queues.map(q => q instanceof Procedure ? q.reset() : null) }
 MediaDOM.undo.onclick = function () { MediaDOM.callUndo(); }
@@ -277,5 +291,5 @@ StateDOM.direction.onclick = function () { this.children[0].innerText = (this.ch
 ProcedureDOM.name.oninput = function() { ProcedureDOM.update(); }
 ProcedureDOM.set.onclick = function() { ProcedureDOM.setProcedure(); }
 ProcedureDOM.del.onclick = function() { ProcedureDOM.deleteProcedure(); }
-SettingsDOM.displayButton.onclick = function () { SettingsDOM.toggleSettings(); }
+settingsButton.onclick = function () { SettingsDOM.toggleSettings(); }
 SettingsDOM.speedRange.oninput = function () { SettingsDOM.updateSpeedChange(); }

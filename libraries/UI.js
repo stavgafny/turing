@@ -103,10 +103,6 @@ function mousePressed(e) {
     if (Mouse.onDelete) {
         // Deletes object[queue/connection]
         Memo.delete(Mouse.onDelete);
-        if (queues.length === 0) {
-            // If queues are now empty
-            ProcedureDOM.update();
-        }
         return;
     }
 
@@ -114,10 +110,6 @@ function mousePressed(e) {
         // Creates a new queue/procedure
         const id = (entities.name === entities.default) ? getNewQueueId() : entities.name;
         Memo.create(queues, new entities.current(Mouse.position, id));
-        if (queues.length === 1) {
-            // If valid name is entered and queues now not empty
-            ProcedureDOM.update();
-        }
         return;
     }
 

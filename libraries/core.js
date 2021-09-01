@@ -12,6 +12,14 @@ class Memo {
 
     static #FORMAT = (list, obj, type) => ({ list, obj, type });
 
+    static #push(data) {
+        // Push new change in data, reset redo and set in undo, refresh undo-redo buttons and stop the engine
+        this.#undo.push(data);
+        this.#redo = [];
+        MediaDOM.refreshUndoRedo();
+        Engine.stop();        
+    }
+
     static hasUndo() { return this.#undo.length > 0; }
     static hasRedo() { return this.#redo.length > 0; }
 
@@ -37,17 +45,14 @@ class Memo {
     }
 
     static create(list, obj) {
-        // Spawns object(queue/connection) saves on #undo(type=created), resets redo
+        // Spawns object(queue/connection) and push it
         list.push(obj);
-        this.#undo.push([this.#FORMAT(list, obj, this.#CREATE)]);
-        this.#redo = [];
-        MediaDOM.refreshUndoRedo();
-        Engine.stop();
+        this.#push([this.#FORMAT(list, obj, this.#CREATE)]);
     }
 
     static delete(obj) {
         /*
-        Deletes object(queue/connection), saves on #undo(type=deleted), resets redo
+        Deletes object(queue/connection) and push it
         Removes object from queues if found, else object is a connection
         If object is a connection. finds connection in one of the queues and removes it
         If object is a queue, removes all connections connected to that queue
@@ -86,11 +91,17 @@ class Memo {
                 save.push(this.#FORMAT(queue.connections, obj, this.#DELETE));
             }
         }
+        this.#push(save);
+    }
 
-        this.#undo.push(save);
-        this.#redo = [];
-        MediaDOM.refreshUndoRedo();
-        Engine.stop();
+    static clear() {
+        // Clear all queues
+        const save = [];
+        queues.map(queue => {
+            save.push(this.#FORMAT(queues, queue, this.#DELETE));
+        });
+        queues.length = 0;
+        this.#push(save);
     }
 
     static undo() {

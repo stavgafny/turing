@@ -19,18 +19,6 @@ const properties = {
     memory: `200@|${State.SPECIAL_KEYS.edge}:1|0:10|R:1|1:1|?1$1`
 };
 
-function toProcedure() {
-    const procedureInstructions = [];
-    queues.map(queue => {
-        const id = queue instanceof Procedure ? queue.originID : queue.id;
-        procedureInstructions.push({
-            id,
-            connections: queue.connections.map(connection => ({ state: connection.state, next: connection.next.id }))
-        });
-    });
-    return procedureInstructions;
-}
-
 function setup() {
     createCanvas(window.innerWidth, window.innerHeight * CANVAS_HEIGHT_WRAPPER);
     cursor(CROSS);
@@ -65,8 +53,6 @@ function draw() {
         Engine.setCurrent(queues[0]);
     if (Engine.running)
         Engine.update();
-
-    ProcedureDOM.update();
 }
 
 function debug() {

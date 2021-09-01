@@ -168,14 +168,17 @@ class ProcedureDOM {
 
     static get value() { return this.name.value; }
 
+    static get onUpdate() {
+        const exsists = !!entities.procedures[this.value];
+        return !this.set.disabled && exsists;
+    }
+
     static update() {
         // Updates buttons according the given name
         const exsists = !!entities.procedures[this.value];
         this.set.disabled = !this.#validName;
         this.del.disabled = !exsists;
-        if (!this.set.disabled) {
-            this.set.classList.toggle(this.#setUpdate, exsists);
-        }
+        this.set.classList.toggle(this.#setUpdate, this.onUpdate);
     }
 
     static setProcedure() {
@@ -185,7 +188,11 @@ class ProcedureDOM {
             // If no procedure -> no entity, create one
             EntitiesDOM.createEntity(this.value);
         }
+        // Set procedure
         entities.setProcedure(this.value);
+        // Clear
+        this.name.value = "";
+        // Update
         this.update();
     }
 

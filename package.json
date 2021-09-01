@@ -1,6 +1,6 @@
 {
   "name": "turing",
-  "version": "0.0.26",
+  "version": "0.0.5",
   "description": "Turing mechine program with simple neat graphics",
   "main": "app.js",
   "scripts": {

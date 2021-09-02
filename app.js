@@ -4,7 +4,7 @@ function createWindow() {
     const window = new BrowserWindow({
         width: 1920,
         height: 1080,
-        frame: false
+        fullscreen: true
     });
     window.removeMenu();
     window.loadFile('index.html');

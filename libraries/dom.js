@@ -177,7 +177,6 @@ class ProcedureDOM {
         // Updates buttons according the given name
         const exsists = !!entities.procedures[this.value];
         this.set.disabled = !this.#validName;
-        this.del.disabled = !exsists;
         this.set.classList.toggle(this.#setUpdate, this.onUpdate);
     }
 
@@ -198,8 +197,8 @@ class ProcedureDOM {
 
     static deleteProcedure() {
         // Delete procedure
-        delete entities.procedures[this.value];
-        EntitiesDOM.deleteEntity(this.value);
+        delete entities.procedures[entities.name];
+        EntitiesDOM.deleteEntity(entities.name);
         this.update();
     }
 }

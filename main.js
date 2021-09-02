@@ -7,7 +7,10 @@ const entities = {
     get default() { return "queue"; },
     get name() { return window.location.hash.slice(2); /* removes has and identifier at the begining([#.]) */ },
     get current() { return (this.name === this.default) ? Queue : Procedure; },
-    set current(value) { window.location.hash = value; },
+    set current(value) {
+        window.location.hash = value;
+        ProcedureDOM.del.disabled = this.name === this.default;
+    },
     procedures: {},
     setProcedure(name) {
         this.procedures[name] = toProcedure();

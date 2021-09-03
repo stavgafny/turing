@@ -212,7 +212,7 @@ class EntitiesDOM {
         const entity = document.createElement("button");
         entity.id = entities.identifier + name;
         entity.innerText = name;
-        entity.onclick = function () { entities.current = this.id; };
+        entity.onmousedown = function () { entities.current = this.id; };
         this.#dom.appendChild(entity);
         return entity.id;
     }

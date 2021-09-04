@@ -38,15 +38,20 @@ class MemoryDOM {
         // Initializing the memory size, cells, pointer using the expression
 
         // Builds the memory using the build expression and the size on properties
-        const { size, pointer, memory } = buildMemory(expression);
-        this.#clear();
-        for (let i = 0; i < size; i++) {
-            const element = document.createElement("li");
-            element.innerText = memory[i];
-            this.#cells.appendChild(element);
+        try {
+            const { size, pointer, memory } = buildMemory(expression);
+            this.#clear();
+            for (let i = 0; i < size; i++) {
+                const element = document.createElement("li");
+                element.innerText = memory[i];
+                this.#cells.appendChild(element);
+            }
+            this.#size.innerText = size;
+            this.#pointer = pointer;
+        } catch (e) {
+            alert(e.message);
+            return;
         }
-        this.#size.innerText = size;
-        this.#pointer = pointer;
     }
 
     static setNext({ output, direction }) {
@@ -238,6 +243,8 @@ class SettingsDOM {
     static settingsWindow = document.getElementById("settings");
     static speedRange = document.getElementById("speed");
     static speedTracker = document.getElementById("speed_tracker");
+    static memoryPrompt = document.getElementById("memory_prompt");
+    static memoryButton = document.getElementById("memory_button");
 
     static get displayed() { return this.settingsWindow.classList.contains(this.#display); }
 
@@ -292,3 +299,66 @@ ProcedureDOM.set.onclick = function() { ProcedureDOM.setProcedure(); }
 ProcedureDOM.del.onclick = function() { ProcedureDOM.deleteProcedure(); }
 settingsButton.onclick = function () { SettingsDOM.toggleSettings(); }
 SettingsDOM.speedRange.oninput = function () { SettingsDOM.updateSpeedChange(); }
+SettingsDOM.memoryPrompt.oninput = function() {
+    try {
+        buildMemory(this.value);
+        this.classList.remove("error");
+    } catch (e) {
+       this.classList.add("error");
+    }
+}
+SettingsDOM.memoryButton.onclick = function() {
+    properties.memory = SettingsDOM.memoryPrompt.value;
+    Engine.reset();
+}
+const specialKeys = document.getElementById("special_keys");
+const KEYS = {
+    "all": "Esc",
+    "null": "Ctrl",
+    "print": "Shift",
+    "block": "Alt",
+    "edge": "Tilde"
+}
+for (const [key, value] of Object.entries(State.SPECIAL_KEYS)) {
+    const div = document.createElement("div");
+    div.style.display = "flex";
+    div.style.gap = "5px";
+
+    const span = document.createElement("span");
+    span.innerText = `${key}`;
+
+    div.appendChild(span);
+
+    const tooltip = document.createElement("div");
+    tooltip.className = "tooltip";
+    const button = document.createElement("button");
+    button.innerText = value;
+
+    const tooltiptext = document.createElement("p");
+    tooltiptext.className = "tooltiptext";
+    tooltiptext.innerText = "Copy";
+    tooltiptext.style.color = "#fff";
+
+    button.onclick = function() {
+        navigator.clipboard.writeText(value);
+        tooltiptext.innerText = "Copied";
+    }
+
+    button.onmouseout = function() {
+        tooltiptext.innerText = "Copy";
+    }
+    
+    button.appendChild(tooltiptext);
+    tooltip.appendChild(button);
+    div.appendChild(tooltip);
+
+
+    const kbd = document.createElement("kbd");
+    kbd.innerText = KEYS[key];
+
+    div.appendChild(kbd);
+
+
+
+    specialKeys.appendChild(div);
+}

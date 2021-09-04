@@ -89,10 +89,40 @@
     <div id="settings">
         <h1>Settings</h1>
         <h2>Engine</h2>
-        <span>Tick rate</span>
+        <h3>Tick rate</h3>
         <input id="speed" type="range" min="10" max="1000" value="0">
-        <span id="speed_tracker"></span>
+        <h3 id="speed_tracker"></h3>
+        <br />
+        <h3>Memory</h3>
+        <input id="memory_prompt" type="text" value="@10:10:4">
+        <input id="memory_button" type="button" value="Rebuild">
+        <br />
+        <span><em><b>Memory expression starts from left to right with current position at 0</b></em></span>
+        <div style="padding-left: 20px;">
+            <span>n<b>@</b> - number of cells <em>[required at first index]</em></span>
+            <span><b>$</b>n - starting pointer index <em>[required at last index]</em></span>
+            <span><b>?</b>n - fill all cells with n <em>[required at index before <b>$</b>]</em></span>
+            <span><b>|</b> - splitter between expressions</span>
+            <span><b>|</b>n<b>|</b> - set current position to that absolute number</span>
+            <span><b>|</b>+n<b>|</b> - moves current position n forwards</span>
+            <span><b>|</b>-n<b>|</b> - moves current position n backwards</span>
+            <span>n - absolute number [|n| = jumps to n] [|a:n| = a n cells] [|a!n| = a every n cells]</span>
+            <span>n<b>%</b> - reletive to the number of cells (n=50&cells=200 => 50% = 100)</span>
+            <span>a<b>:</b>b - sets current position cell to a, and b cells after current, moves current position to b</span>
+            <span>a<b>!</b>b - every b cells sets a, doesn't affect current position</span>
+        </div>
+        
+        <h2>Keybinds</h2>
+        <span><kbd>Shift</kbd> - new queue</span>
+        <span><kbd>Ctrl</kbd> - add connection</span>
+        <span><kbd>Alt</kbd> - delete queue/connection</span>
+        <span><kbd>Z</kbd> - undo build move</span>
+        <span><kbd>X</kbd> - redo build move</span>
+        <span><kbd>MB2</kbd> - toggle grid</span>
+
+        <h2>Special Keys</h2>
+        <div id="special_keys"></div>
     </div>
 </body>
 
-</html>
+</html> 

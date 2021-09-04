@@ -1,25 +1,18 @@
 {
   "name": "turing",
   "version": "0.0.7",
-  "description": "Turing mechine program with simple neat graphics",
+  "description": "turing machine with simple graphics",
   "main": "app.js",
-  "scripts": {
-    "start": "electron .",
-    "build": "electron-packager ./ app.js --platform=win32 --arch=x64"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stavgafny/Turing.git"
+    "url": "git+https://github.com/stavgafny/turing.git"
   },
   "author": "Stav~Gafny",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/stavgafny/Turing/issues"
+    "url": "https://github.com/stavgafny/turing/issues"
   },
-  "homepage": "https://github.com/stavgafny/Turing#readme",
-  "devDependencies": {
-    "electron": "^13.2.3",
-    "electron-packager": "^15.3.0",
-    "electron-reloader": "^1.2.1"
-  }
+  "homepage": "https://github.com/stavgafny/turing#readme",
+  "devDependencies": {}
 }
